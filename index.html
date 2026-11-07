@@ -4,14 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0b0e14">
-<title>Trademd.gg</title>
+<title>Trademd.gg — Мобильный Трейдинг</title>
+
+<!-- Favicon SVG -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232962ff'/><path d='M8 20L14 14L18 18L24 10M24 10H19M24 10V15' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>
 /* =========================================================================
-   1. MOBILE-FIRST SYSTEM & BASE VARIABLES (BINANCE / BYBIT DARK STYLES)
+   1. BASE STYLES & VARIABLES
    ========================================================================= */
 :root {
   --bg-main: #0b0e14;
@@ -19,7 +24,7 @@
   --bg-panel: #1a202c;
   --bg-input: #0f131d;
   
-  --border: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.08);
   --border-active: #2962ff;
 
   --text-main: #f1f5f9;
@@ -31,11 +36,13 @@
   --red: #f6465d;
   --red-bg: rgba(246, 70, 93, 0.12);
   --blue: #2962ff;
+  --blue-bg: rgba(41, 98, 255, 0.15);
   --gold: #f0b90b;
+  --gold-bg: rgba(240, 185, 11, 0.15);
 
   --nav-h: 62px;
   --header-h: 56px;
-  --radius: 12px;
+  --radius: 14px;
   --radius-sm: 8px;
 }
 
@@ -60,31 +67,33 @@ html, body {
 .hidden { display: none !important; }
 
 /* =========================================================================
-   2. TOUCH ANIMATIONS & MICRO-INTERACTIONS
+   2. ANIMATIONS & UI ELEMENTS
    ========================================================================= */
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes flashGreen { 0% { color: var(--green); background: var(--green-bg); } 100% { color: inherit; background: transparent; } }
-@keyframes flashRed { 0% { color: var(--red); background: var(--red-bg); } 100% { color: inherit; background: transparent; } }
-@keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(14, 203, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(14, 203, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 203, 129, 0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(41, 98, 255, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(41, 98, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(41, 98, 255, 0); } }
 
-.flash-up { animation: flashGreen 0.6s ease-out; }
-.flash-down { animation: flashRed 0.6s ease-out; }
+.svg-icon {
+  width: 18px; height: 18px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  display: inline-block; vertical-align: middle;
+}
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 700;
   background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main);
-  cursor: pointer; transition: transform 0.1s ease, background 0.15s ease, opacity 0.15s ease;
+  cursor: pointer; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap; outline: none;
 }
-.btn:active { transform: scale(0.96); }
-.btn.primary { background: var(--blue); border: none; color: #fff; }
-.btn.buy { background: var(--green); border: none; color: #000; font-weight: 800; }
-.btn.sell { background: var(--red); border: none; color: #fff; font-weight: 800; }
+.btn:active { transform: scale(0.96); opacity: 0.9; }
+.btn.primary { background: var(--blue); border: none; color: #fff; box-shadow: 0 4px 12px rgba(41,98,255,0.3); }
+.btn.buy { background: var(--green); border: none; color: #000; font-weight: 800; box-shadow: 0 4px 12px rgba(14,203,129,0.25); }
+.btn.sell { background: var(--red); border: none; color: #fff; font-weight: 800; box-shadow: 0 4px 12px rgba(246,70,93,0.25); }
 .btn.sm { padding: 6px 10px; font-size: 12px; }
 .btn.full { width: 100%; }
-.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
 .inp {
   width: 100%; padding: 10px 12px; border-radius: var(--radius-sm);
@@ -98,7 +107,7 @@ html, body {
 .field label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
 /* =========================================================================
-   3. AUTH SCREEN (MOBILE FIRST)
+   3. LAYOUT & SCREENS
    ========================================================================= */
 .auth-wrapper {
   position: fixed; inset: 0; z-index: 999;
@@ -111,8 +120,9 @@ html, body {
   text-align: center; animation: fadeIn 0.25s ease-out;
 }
 .brand-icon {
-  width: 44px; height: 44px; border-radius: 12px; background: var(--blue);
-  color: #fff; font-size: 20px; font-weight: 900; display: inline-grid; place-items: center; margin-bottom: 10px;
+  width: 48px; height: 48px; border-radius: 12px; background: var(--blue);
+  color: #fff; display: inline-grid; place-items: center; margin-bottom: 10px;
+  animation: pulseGlow 2s infinite;
 }
 .auth-tabs { display: flex; background: var(--bg-input); padding: 3px; border-radius: var(--radius-sm); margin: 16px 0; }
 .auth-tab { flex: 1; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 700; color: var(--text-muted); border: none; background: transparent; cursor: pointer; }
@@ -121,30 +131,19 @@ html, body {
 .captcha-box canvas { border-radius: 6px; background: #000; border: 1px solid var(--border); }
 .err-msg { color: var(--red); font-size: 12px; font-weight: 600; min-height: 16px; margin-top: 8px; }
 
-/* =========================================================================
-   4. FULLSCREEN APPLICATION LAYOUT
-   ========================================================================= */
-.app-layout {
-  display: flex; flex-direction: column; width: 100vw; height: 100dvh; overflow: hidden;
-}
+.app-layout { display: flex; flex-direction: column; width: 100vw; height: 100dvh; overflow: hidden; }
 
-/* Header */
 .header {
   height: var(--header-h); flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 14px; background: var(--bg-card); border-bottom: 1px solid var(--border);
 }
-.user-pill { display: flex; align-items: center; gap: 8px; }
-.lvl-badge { padding: 3px 7px; border-radius: 6px; background: rgba(240, 185, 11, 0.15); color: var(--gold); font-size: 11px; font-weight: 800; }
+.user-pill { display: flex; align-items: center; gap: 10px; }
+.lvl-badge { padding: 2px 6px; border-radius: 6px; background: var(--gold-bg); color: var(--gold); font-size: 10.5px; font-weight: 800; }
 .cash-display { font-size: 14px; font-weight: 800; color: var(--green); }
 
-/* Main Content Area */
-.content-area {
-  flex: 1; height: calc(100dvh - var(--header-h) - var(--nav-h));
-  overflow-y: auto; position: relative;
-}
+.content-area { flex: 1; height: calc(100dvh - var(--header-h) - var(--nav-h)); overflow-y: auto; position: relative; }
 
-/* Bottom Navigation Bar (Mobile Native Style) */
 .bottom-nav {
   height: var(--nav-h); flex-shrink: 0;
   display: grid; grid-template-columns: repeat(4, 1fr);
@@ -155,20 +154,18 @@ html, body {
   color: var(--text-muted); font-size: 10.5px; font-weight: 700; cursor: pointer; transition: 0.15s;
 }
 .nav-item.active { color: var(--blue); }
-.nav-item svg { width: 20px; height: 20px; stroke-width: 2.2; }
 
-/* =========================================================================
-   5. TERMINAL & MARKET VIEWS
-   ========================================================================= */
 .page { height: 100%; display: flex; flex-direction: column; animation: slideUp 0.2s ease-out; }
+.padding-box { padding: 14px; }
+.card-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; }
 
-/* Market Grid List */
-.market-list { display: flex; flex-direction: column; }
+/* Market Grid */
 .coin-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px; border-bottom: 1px solid var(--border); cursor: pointer;
+  padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: background 0.15s;
 }
-.coin-row:active { background: rgba(255,255,255,0.02); }
+.coin-row:active { background: rgba(255,255,255,0.03); }
 .coin-left { display: flex; align-items: center; gap: 10px; }
 .coin-icon { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: #fff; }
 .coin-symbol { font-weight: 800; font-size: 14px; }
@@ -179,12 +176,9 @@ html, body {
 .coin-chg.up { color: var(--green); background: var(--green-bg); }
 .coin-chg.down { color: var(--red); background: var(--red-bg); }
 
-/* Fullscreen Terminal Screen */
+/* Terminal */
 .terminal-screen { display: flex; flex-direction: column; height: 100%; }
-.terminal-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 14px; background: var(--bg-main); border-bottom: 1px solid var(--border);
-}
+.terminal-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-main); border-bottom: 1px solid var(--border); }
 .tf-selector { display: flex; gap: 4px; }
 .tf-btn { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: var(--text-muted); background: transparent; border: none; cursor: pointer; }
 .tf-btn.active { color: var(--text-main); background: var(--bg-panel); }
@@ -192,42 +186,33 @@ html, body {
 .chart-box { flex: 1; position: relative; width: 100%; min-height: 180px; background: var(--bg-main); }
 .chart-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-.trade-panel-bottom {
-  background: var(--bg-card); border-top: 1px solid var(--border); padding: 12px 14px;
-  display: flex; flex-direction: column; gap: 10px;
-}
+.trade-panel-bottom { background: var(--bg-card); border-top: 1px solid var(--border); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
 .order-type-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pct-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 
-/* Orderbook Mini Component */
-.orderbook-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; padding: 8px 14px; background: var(--bg-card); border-top: 1px solid var(--border); }
-.ob-row { display: flex; justify-content: space-between; padding: 2px 0; }
-
-/* =========================================================================
-   6. PORTFOLIO, SHOP & PROFILE VIEWS
-   ========================================================================= */
-.padding-box { padding: 14px; }
-.card-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; }
-
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+/* Shop & Profile components */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .stat-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
 .stat-item label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-.stat-item .val { font-size: 16px; font-weight: 800; margin-top: 2px; }
+.stat-item .val { font-size: 15px; font-weight: 800; margin-top: 2px; }
 
-.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-.shop-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; text-align: center; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.shop-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
 
-/* Avatar System */
-.av-box { position: relative; width: 42px; height: 42px; border-radius: 50%; display: inline-grid; place-items: center; flex-shrink: 0; }
+/* Avatars */
+.av-box { position: relative; width: 40px; height: 40px; border-radius: 50%; display: inline-grid; place-items: center; flex-shrink: 0; }
 .av-ring { position: absolute; inset: -2px; border-radius: 50%; z-index: 1; }
 .av-inner { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: var(--bg-panel); display: grid; place-items: center; z-index: 2; font-weight: 800; font-size: 13px; }
 .av-inner img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Toast Notifications */
+/* Modal & Toast */
 #toast-container { position: fixed; top: 12px; left: 14px; right: 14px; z-index: 1000; pointer-events: none; display: flex; flex-direction: column; gap: 6px; }
-.toast { padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 700; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); box-shadow: 0 8px 20px rgba(0,0,0,0.5); animation: fadeIn 0.2s ease; }
+.toast { padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 700; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); box-shadow: 0 8px 24px rgba(0,0,0,0.6); animation: fadeIn 0.2s ease; display: flex; align-items: center; gap: 8px; }
 .toast.ok { border-color: var(--green); color: var(--green); }
 .toast.err { border-color: var(--red); color: var(--red); }
+
+.modal-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,0.7); display: grid; place-items: center; padding: 16px; animation: fadeIn 0.15s ease; }
+.modal-body { width: 100%; max-width: 360px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
 </style>
 </head>
 <body>
@@ -237,9 +222,11 @@ html, body {
    ========================================================================= -->
 <div id="auth-screen" class="auth-wrapper">
   <div class="auth-card">
-    <div class="brand-icon">TM</div>
+    <div class="brand-icon">
+      <svg class="svg-icon" style="width:26px; height:26px;" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+    </div>
     <h2 style="font-size:20px; font-weight:900;">TradeMD.gg</h2>
-    <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">Мобильный трейдинг-симулятор</p>
+    <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">Криптотрейдинг Симулятор</p>
 
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-login" onclick="setAuthTab('login')">Вход</button>
@@ -265,20 +252,22 @@ html, body {
           <label>Капча</label>
           <div class="captcha-box">
             <canvas id="captcha-canvas" width="140" height="38"></canvas>
-            <button type="button" class="btn sm" onclick="initCaptcha()">↻</button>
+            <button type="button" class="btn sm" onclick="initCaptcha()">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
           </div>
           <input type="text" id="auth-captcha" class="inp mono" placeholder="XXXXX" maxlength="5" style="text-transform:uppercase;">
         </div>
       </div>
 
-      <button type="submit" id="auth-btn" class="btn primary full" style="margin-top:6px;">Войти</button>
+      <button type="submit" id="auth-btn" class="btn primary full" style="margin-top:8px;">Войти</button>
       <div id="auth-err" class="err-msg"></div>
     </form>
   </div>
 </div>
 
 <!-- =========================================================================
-   MAIN APPLICATION LAYOUT
+   MAIN APP LAYOUT
    ========================================================================= -->
 <div id="app-screen" class="app-layout hidden">
   <header class="header">
@@ -289,38 +278,88 @@ html, body {
         <div class="lvl-badge" id="hdr-lvl">LVL 1</div>
       </div>
     </div>
-    <div class="cash-display mono" id="hdr-cash">$0.00</div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button class="btn sm" onclick="openAlertModal()" style="padding:4px 8px;">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <div class="cash-display mono" id="hdr-cash">$0.00</div>
+    </div>
   </header>
 
   <main class="content-area" id="main-view"></main>
 
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchNav('market')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
       <span>Рынки</span>
     </div>
     <div class="nav-item" onclick="switchNav('trade')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       <span>Торговля</span>
     </div>
     <div class="nav-item" onclick="switchNav('portfolio')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12V7H3v5"/><path d="M3 12v7h18v-7"/><path d="M12 12v.01"/></svg>
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 12V7H3v5"/><path d="M3 12v7h18v-7"/><path d="M12 12v.01"/></svg>
       <span>Портфель</span>
     </div>
     <div class="nav-item" onclick="switchNav('profile')">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>Профиль</span>
     </div>
   </nav>
 </div>
 
 <div id="toast-container"></div>
+<div id="modal-container"></div>
 <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="uploadAvatar(event)">
 
+<!-- =========================================================================
+   JAVASCRIPT GAME ENGINE & CONTROLLERS
+   ========================================================================= -->
 <script>
-/* =========================================================================
-   1. ИГРОВЫЕ ДАННЫЕ И КОНСТАНТЫ
-   ========================================================================= */
+/* Audio Effects Engine (Web Audio API) */
+class SoundFx {
+  constructor() { this.ctx = null; this.enabled = true; }
+  init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+  play(type) {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain); gain.connect(this.ctx.destination);
+    const now = this.ctx.currentTime;
+
+    if (type === 'buy') {
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+      osc.start(now); osc.stop(now + 0.12);
+    } else if (type === 'sell') {
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.12);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+      osc.start(now); osc.stop(now + 0.12);
+    } else if (type === 'click') {
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+      osc.start(now); osc.stop(now + 0.04);
+    }
+  }
+}
+const sounds = new SoundFx();
+
+/* SVG Helpers */
+const SVG = {
+  check: `<svg class="svg-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`,
+  alert: `<svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  gift: `<svg class="svg-icon" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>`,
+  star: `<svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+};
+
+/* State & Storage */
 const ASSETS = {
   MDC: { name: 'Mendeleev Coin', symbol: 'MDC', color: '#2962ff', price: 140.00 },
   PDL: { name: 'Poodle Token', symbol: 'PDL', color: '#9d56ff', price: 42.50 },
@@ -330,10 +369,10 @@ const ASSETS = {
 
 const SHOP = {
   frames: [
-    { id: 'fr_base', name: 'Обычная', price: 0, style: 'border:2px solid var(--border)' },
-    { id: 'fr_blue', name: 'Неон Синий', price: 2500, style: 'border:2px solid #2962ff; box-shadow:0 0 8px #2962ff' },
-    { id: 'fr_gold', name: 'Золото', price: 10000, style: 'border:2px solid #f0b90b; box-shadow:0 0 8px #f0b90b' },
-    { id: 'fr_red', name: 'Огонь', price: 25000, style: 'border:2px solid #f6465d; box-shadow:0 0 10px #f6465d' }
+    { id: 'fr_base', name: 'Стандарт', price: 0, style: 'border:2px solid var(--border)' },
+    { id: 'fr_blue', name: 'Неон Синий', price: 2500, style: 'border:2px solid #2962ff; box-shadow:0 0 10px #2962ff' },
+    { id: 'fr_gold', name: 'Золото', price: 10000, style: 'border:2px solid #f0b90b; box-shadow:0 0 10px #f0b90b' },
+    { id: 'fr_red', name: 'Огонь', price: 25000, style: 'border:2px solid #f6465d; box-shadow:0 0 12px #f6465d' }
   ],
   nicks: [
     { id: 'nk_base', name: 'Стандарт', price: 0, color: 'var(--text-main)' },
@@ -346,15 +385,12 @@ const SHOP = {
 const PROMOS = {
   'START2026': { cash: 5000, msg: '+ $5,000 на счёт!' },
   'TRADEMD': { cash: 12000, msg: '+ $12,000 бонуса!' },
-  'PUMPKIN': { frame: 'fr_gold', msg: 'Золотая рамка разблокирована!' }
+  'PUMPKIN': { frame: 'fr_gold', msg: 'Золотая рамка unlocked!' }
 };
 
-/* =========================================================================
-   2. ЛОКАЛЬНОЕ ХРАНИЛИЩЕ И СОСТОЯНИЕ
-   ========================================================================= */
 let DB = {
-  users: JSON.parse(localStorage.getItem('tm_users_v3') || '{}'),
-  session: localStorage.getItem('tm_session_v3') || null
+  users: JSON.parse(localStorage.getItem('tm_users_v4') || '{}'),
+  session: localStorage.getItem('tm_session_v4') || null
 };
 
 let marketHistory = {};
@@ -362,29 +398,30 @@ let currentNav = 'market';
 let activeSym = 'MDC';
 let captchaCode = '';
 let authMode = 'login';
+let priceAlerts = [];
 
-// Инициализация котировок
 Object.keys(ASSETS).forEach(s => {
   const base = ASSETS[s].price;
   marketHistory[s] = Array.from({length: 35}, () => base + (Math.random() * 4 - 2));
 });
 
 function saveDB() {
-  localStorage.setItem('tm_users_v3', JSON.stringify(DB.users));
-  if (DB.session) localStorage.setItem('tm_session_v3', DB.session);
-  else localStorage.removeItem('tm_session_v3');
+  localStorage.setItem('tm_users_v4', JSON.stringify(DB.users));
+  if (DB.session) localStorage.setItem('tm_session_v4', DB.session);
+  else localStorage.removeItem('tm_session_v4');
 }
 
-function getUser() {
-  return DB.session ? DB.users[DB.session] : null;
-}
+function getUser() { return DB.session ? DB.users[DB.session] : null; }
+function fmtUSD(v) { return '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function getReqXP(lvl) { return Math.floor(100 * Math.pow(lvl, 1.3)); }
 
-function fmtUSD(v) {
-  return '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function getReqXP(lvl) {
-  return Math.floor(100 * Math.pow(lvl, 1.3));
+function toast(msg, type = 'ok') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `${type === 'ok' ? SVG.check : SVG.alert} <span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
 }
 
 function addXP(u, amount) {
@@ -405,9 +442,7 @@ function addXP(u, amount) {
   renderHeader();
 }
 
-/* =========================================================================
-   3. РЕАЛЬНЫЙ ТИКЕР РЫНКА (TICKER)
-   ========================================================================= */
+/* Market Ticker Loop */
 setInterval(() => {
   Object.keys(ASSETS).forEach(s => {
     const hist = marketHistory[s];
@@ -417,8 +452,18 @@ setInterval(() => {
 
     hist.push(newP);
     if (hist.length > 40) hist.shift();
-
     ASSETS[s].price = newP;
+
+    // Check alerts
+    priceAlerts = priceAlerts.filter(a => {
+      if (a.sym === s) {
+        if ((a.dir === 'above' && newP >= a.target) || (a.dir === 'below' && newP <= a.target)) {
+          toast(`Алерт: ${s} достиг ${fmtUSD(newP)}!`, 'ok');
+          return false;
+        }
+      }
+      return true;
+    });
   });
 
   if (DB.session) {
@@ -431,9 +476,7 @@ setInterval(() => {
   }
 }, 1600);
 
-/* =========================================================================
-   4. CANVAS ГРАФИК ТЕРМИНАЛА (LIGHTWEIGHT & SMOOTH)
-   ========================================================================= */
+/* Canvas Chart */
 function drawChart() {
   const canvas = document.getElementById('chart-canvas');
   if (!canvas) return;
@@ -452,7 +495,6 @@ function drawChart() {
   const max = Math.max(...data);
   const range = (max - min) || 1;
 
-  // Grid
   ctx.strokeStyle = 'rgba(255,255,255,0.04)';
   ctx.lineWidth = 1;
   for (let i = 1; i < 4; i++) {
@@ -465,7 +507,6 @@ function drawChart() {
     y: h - ((v - min) / range) * (h - 24) - 12
   }));
 
-  // Line
   ctx.beginPath();
   ctx.moveTo(pts[0].x, pts[0].y);
   for (let i = 1; i < pts.length; i++) {
@@ -477,15 +518,13 @@ function drawChart() {
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // Gradient Fill
   const grad = ctx.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, color + '30');
+  grad.addColorStop(0, color + '35');
   grad.addColorStop(1, color + '00');
   ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
   ctx.fillStyle = grad;
   ctx.fill();
 
-  // Pulse Point
   const last = pts[pts.length - 1];
   ctx.beginPath();
   ctx.arc(last.x, last.y, 4, 0, Math.PI * 2);
@@ -493,9 +532,7 @@ function drawChart() {
   ctx.fill();
 }
 
-/* =========================================================================
-   5. UI РЕНДЕРИНГ И НАВИГАЦИЯ
-   ========================================================================= */
+/* UI Rendering */
 function renderAvatarHTML(u, size = 32) {
   const frameObj = SHOP.frames.find(f => f.id === u.frame) || SHOP.frames[0];
   const initials = u.login.substring(0, 2).toUpperCase();
@@ -523,6 +560,7 @@ function renderHeader() {
 }
 
 function switchNav(target) {
+  sounds.play('click');
   currentNav = target;
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.remove('active');
@@ -538,7 +576,7 @@ function switchNav(target) {
   else if (target === 'profile') renderProfileView(main, u);
 }
 
-/* ЭКРАН 1: РЫНОК */
+/* Market Page */
 function renderMarketView(container) {
   container.className = 'content-area page';
   container.innerHTML = `
@@ -584,7 +622,7 @@ function openTradeForSymbol(s) {
   switchNav('trade');
 }
 
-/* ЭКРАН 2: ТЕРМИНАЛ ТОРГОВЛИ */
+/* Trade Page */
 function renderTradeView(container, u) {
   const owned = u.portfolio[activeSym] || 0;
   container.className = 'content-area page terminal-screen';
@@ -603,19 +641,6 @@ function renderTradeView(container, u) {
 
     <div class="chart-box">
       <canvas id="chart-canvas"></canvas>
-    </div>
-
-    <div class="orderbook-mini">
-      <div>
-        <div style="color:var(--text-muted); margin-bottom:4px;">Продажи (Ask)</div>
-        <div class="ob-row mono" style="color:var(--red);"><span>${(ASSETS[activeSym].price * 1.002).toFixed(2)}</span><span>0.42</span></div>
-        <div class="ob-row mono" style="color:var(--red);"><span>${(ASSETS[activeSym].price * 1.001).toFixed(2)}</span><span>1.15</span></div>
-      </div>
-      <div>
-        <div style="color:var(--text-muted); margin-bottom:4px;">Покупки (Bid)</div>
-        <div class="ob-row mono" style="color:var(--green);"><span>${(ASSETS[activeSym].price * 0.999).toFixed(2)}</span><span>0.88</span></div>
-        <div class="ob-row mono" style="color:var(--green);"><span>${(ASSETS[activeSym].price * 0.998).toFixed(2)}</span><span>2.04</span></div>
-      </div>
     </div>
 
     <div class="trade-panel-bottom">
@@ -662,6 +687,7 @@ function calcTradeTotal() {
 }
 
 function setQuickPct(pct) {
+  sounds.play('click');
   const u = getUser();
   const price = ASSETS[activeSym].price;
   const inp = document.getElementById('trade-qty');
@@ -700,11 +726,12 @@ function doTrade(type) {
     u.portfolio[activeSym] = newQty;
     u.buyPrices[activeSym] = newAvg;
     addXP(u, Math.max(5, Math.floor(cost / 40)));
+    sounds.play('buy');
 
   } else {
     const currQty = u.portfolio[activeSym] || 0;
     if (currQty < qty) {
-      toast('Нельзя продать больше имеющегося!', 'err');
+      toast('Недостаточно монет для продажи!', 'err');
       return;
     }
     u.cash += cost;
@@ -714,6 +741,7 @@ function doTrade(type) {
       delete u.buyPrices[activeSym];
     }
     addXP(u, Math.max(5, Math.floor(cost / 40)));
+    sounds.play('sell');
   }
 
   saveDB();
@@ -722,7 +750,7 @@ function doTrade(type) {
   renderHeader();
 }
 
-/* ЭКРАН 3: ПОРТФЕЛЬ */
+/* Portfolio Page */
 function renderPortfolioView(container, u) {
   container.className = 'content-area page padding-box';
   let cryptoVal = 0, totalCost = 0;
@@ -755,7 +783,7 @@ function renderPortfolioView(container, u) {
     </div>
 
     <div class="card-panel">
-      <h4 style="font-weight:800; margin-bottom:10px;">Активные Активы</h4>
+      <h4 style="font-weight:800; margin-bottom:10px;">Открытые Позиции</h4>
       ${Object.keys(u.portfolio).filter(s => u.portfolio[s] > 0).map(s => {
         const q = u.portfolio[s];
         const currP = ASSETS[s].price;
@@ -777,12 +805,12 @@ function renderPortfolioView(container, u) {
             </div>
           </div>
         `;
-      }).join('') || '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px 0;">У вас нет открытых позиций</div>'}
+      }).join('') || '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:10px 0;">Нет активных позиций</div>'}
     </div>
   `;
 }
 
-/* ЭКРАН 4: ПРОФИЛЬ & МАГАЗИН */
+/* Profile & Shop Page */
 function renderProfileView(container, u) {
   container.className = 'content-area page padding-box';
   const req = getReqXP(u.level);
@@ -791,189 +819,259 @@ function renderProfileView(container, u) {
   container.innerHTML = `
     <div class="card-panel" style="display:flex; align-items:center; gap:14px;">
       ${renderAvatarHTML(u, 52)}
-      <div>
+      <div style="flex:1;">
         <h3 style="font-weight:900; font-size:17px;">${u.login}</h3>
-        <div style="font-size:12px; color:var(--text-muted);">Прогресс XP: ${u.xp} / ${req} (${pct}%)</div>
+        <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+          XP: ${u.xp} / ${req} (${pct}%)
+        </div>
+        <div style="width:100%; height:6px; background:var(--bg-input); border-radius:3px; margin-top:6px; overflow:hidden;">
+          <div style="width:${pct}%; height:100%; background:var(--blue); border-radius:3px;"></div>
+        </div>
       </div>
     </div>
 
     <div class="card-panel">
-      <h4 style="font-weight:800; margin-bottom:8px;">🎁 Промокод</h4>
+      <h4 style="font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+        ${SVG.gift} Промокод
+      </h4>
       <div style="display:flex; gap:8px;">
-        <input type="text" id="promo-code" class="inp mono" placeholder="START2026" style="text-transform:uppercase;">
-        <button class="btn primary sm" onclick="usePromo()">Ввести</button>
+        <input type="text" id="promo-inp" class="inp mono" placeholder="START2026" style="text-transform:uppercase;">
+        <button class="btn primary" onclick="applyPromo()">Ввести</button>
       </div>
     </div>
 
-    <h4 style="font-weight:800; margin-bottom:10px;">Магазин Кастомизации</h4>
-    <div class="shop-grid">
-      ${SHOP.frames.map(f => {
-        const owned = u.inventory.includes(f.id);
-        const active = u.frame === f.id;
-        return `
+    <div class="card-panel">
+      <h4 style="font-weight:800; margin-bottom:10px;">Магазин Рамок</h4>
+      <div class="shop-grid">
+        ${SHOP.frames.map(f => `
           <div class="shop-card">
-            <div class="av-box" style="width:36px; height:36px; margin:0 auto 8px;">
-              <div class="av-ring" style="${f.style}"></div>
-              <div class="av-inner">TM</div>
-            </div>
-            <div style="font-size:12px; font-weight:800;">${f.name}</div>
-            <div style="font-size:11px; color:var(--gold); margin:4px 0;" class="mono">${f.price === 0 ? 'Free' : fmtUSD(f.price)}</div>
-            ${active ? '<button class="btn sm full" disabled>Надето</button>' :
-              owned ? `<button class="btn sm full" onclick="equip('frame','${f.id}')">Надеть</button>` :
-              `<button class="btn sm buy full" onclick="buyItem('${f.id}',${f.price},'frame')">Купить</button>`
-            }
+            <div style="font-size:12px; font-weight:800; margin-bottom:6px;">${f.name}</div>
+            <button class="btn sm full ${u.frame === f.id ? 'primary' : ''}" onclick="buyItem('frame', '${f.id}')">
+              ${u.frame === f.id ? 'Надето' : (u.inventory.includes(f.id) ? 'Надеть' : fmtUSD(f.price))}
+            </button>
           </div>
-        `;
-      }).join('')}
+        `).join('')}
+      </div>
     </div>
 
-    <button class="btn full sm" onclick="logout()" style="margin-top:20px; color:var(--red);">Выйти из аккаунта</button>
+    <div class="card-panel">
+      <h4 style="font-weight:800; margin-bottom:10px;">Цвет Никнейма</h4>
+      <div class="shop-grid">
+        ${SHOP.nicks.map(n => `
+          <div class="shop-card">
+            <div style="font-size:12px; font-weight:800; margin-bottom:6px; color:${n.color};">${n.name}</div>
+            <button class="btn sm full ${u.nickColor === n.id ? 'primary' : ''}" onclick="buyItem('nick', '${n.id}')">
+              ${u.nickColor === n.id ? 'Надето' : (u.inventory.includes(n.id) ? 'Надеть' : fmtUSD(n.price))}
+            </button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <button class="btn sell full" onclick="logout()" style="margin-top:10px;">Выйти из аккаунта</button>
   `;
 }
 
-function buyItem(id, price, type) {
+function buyItem(type, id) {
+  sounds.play('click');
   const u = getUser();
-  if (u.cash < price) {
-    toast('Недостаточно средств!', 'err');
-    return;
+  const list = type === 'frame' ? SHOP.frames : SHOP.nicks;
+  const item = list.find(x => x.id === id);
+  if (!item) return;
+
+  if (u.inventory.includes(id)) {
+    if (type === 'frame') u.frame = id;
+    else u.nickColor = id;
+    toast('Оформление применено!', 'ok');
+  } else {
+    if (u.cash < item.price) {
+      toast('Недостаточно средств!', 'err');
+      return;
+    }
+    u.cash -= item.price;
+    u.inventory.push(id);
+    if (type === 'frame') u.frame = id;
+    else u.nickColor = id;
+    toast('Покупка успешна!', 'ok');
   }
-  u.cash -= price;
-  u.inventory.push(id);
-  u[type] = id;
+
   saveDB();
-  toast('Куплено и применено!', 'ok');
-  renderProfileView(document.getElementById('main-view'), u);
   renderHeader();
+  renderProfileView(document.getElementById('main-view'), u);
 }
 
-function equip(type, id) {
-  const u = getUser();
-  u[type] = id;
-  saveDB();
-  toast('Стиль обновлен', 'ok');
-  renderProfileView(document.getElementById('main-view'), u);
-  renderHeader();
-}
-
-function usePromo() {
-  const inp = document.getElementById('promo-code');
-  if (!inp) return;
-  const code = inp.value.trim().toUpperCase();
+function applyPromo() {
+  sounds.play('click');
+  const inp = document.getElementById('promo-inp');
+  const code = (inp.value || '').trim().toUpperCase();
   const u = getUser();
 
-  if (u.promos.includes(code)) {
-    toast('Код уже использован!', 'err');
+  if (u.usedPromos.includes(code)) {
+    toast('Промокод уже использован!', 'err');
     return;
   }
+
   const p = PROMOS[code];
   if (!p) {
-    toast('Неверный код!', 'err');
+    toast('Неверный промокод!', 'err');
     return;
   }
 
-  u.promos.push(code);
+  u.usedPromos.push(code);
   if (p.cash) u.cash += p.cash;
-  if (p.frame && !u.inventory.includes(p.frame)) u.inventory.push(p.frame);
+  if (p.frame) {
+    if (!u.inventory.includes(p.frame)) u.inventory.push(p.frame);
+    u.frame = p.frame;
+  }
 
   saveDB();
   toast(p.msg, 'ok');
-  renderProfileView(document.getElementById('main-view'), u);
+  inp.value = '';
   renderHeader();
+  renderProfileView(document.getElementById('main-view'), u);
 }
 
-/* =========================================================================
-   6. АВТОРИЗАЦИЯ И КАПЧА
-   ========================================================================= */
+/* Modal Alerts System */
+function openAlertModal() {
+  sounds.play('click');
+  const m = document.getElementById('modal-container');
+  m.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal-body">
+        <h4 style="font-weight:900; margin-bottom:12px;">Установить Алерт Цены</h4>
+        <div class="field">
+          <label>Монета</label>
+          <select id="alert-sym" class="inp mono">
+            ${Object.keys(ASSETS).map(s => `<option value="${s}">${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Целевая Цена ($)</label>
+          <input type="number" id="alert-target" class="inp mono" placeholder="150.00" step="any">
+        </div>
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button class="btn full" onclick="closeModal()">Отмена</button>
+          <button class="btn primary full" onclick="addAlert()">Создать</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function closeModal(e) {
+  if (!e || e.target.classList.contains('modal-overlay') || !e.target) {
+    document.getElementById('modal-container').innerHTML = '';
+  }
+}
+
+function addAlert() {
+  sounds.play('click');
+  const sym = document.getElementById('alert-sym').value;
+  const target = parseFloat(document.getElementById('alert-target').value);
+
+  if (!target || target <= 0) {
+    toast('Укажите корректную цену!', 'err');
+    return;
+  }
+
+  const current = ASSETS[sym].price;
+  const dir = target >= current ? 'above' : 'below';
+
+  priceAlerts.push({ sym, target, dir });
+  toast(`Уведомление создано на ${fmtUSD(target)}`, 'ok');
+  document.getElementById('modal-container').innerHTML = '';
+}
+
+/* Auth System */
+function setAuthTab(mode) {
+  sounds.play('click');
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+  document.getElementById('tab-reg').classList.toggle('active', mode === 'register');
+  document.getElementById('reg-box').classList.toggle('hidden', mode === 'login');
+  document.getElementById('auth-btn').textContent = mode === 'login' ? 'Войти' : 'Зарегистрироваться';
+  document.getElementById('auth-err').textContent = '';
+  if (mode === 'register') initCaptcha();
+}
+
 function initCaptcha() {
   const canvas = document.getElementById('captcha-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#0f131d'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0f131d'; ctx.fillRect(0, 0, 140, 38);
 
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  captchaCode = code;
+  captchaCode = Array.from({length: 5}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 
-  ctx.font = 'bold 18px "JetBrains Mono", monospace';
+  ctx.font = 'bold 20px "JetBrains Mono", monospace';
   ctx.fillStyle = '#2962ff';
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(code, canvas.width / 2, canvas.height / 2);
-}
+  ctx.fillText(captchaCode, 70, 26);
 
-function setAuthTab(mode) {
-  authMode = mode;
-  document.getElementById('tab-login').className = `auth-tab ${mode === 'login' ? 'active' : ''}`;
-  document.getElementById('tab-reg').className = `auth-tab ${mode === 'register' ? 'active' : ''}`;
-  document.getElementById('reg-box').className = mode === 'register' ? '' : 'hidden';
-  document.getElementById('auth-btn').textContent = mode === 'register' ? 'Зарегистрироваться' : 'Войти';
-  if (mode === 'register') initCaptcha();
+  for(let i=0; i<4; i++) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(Math.random()*140, Math.random()*38);
+    ctx.lineTo(Math.random()*140, Math.random()*38);
+    ctx.stroke();
+  }
 }
 
 function handleAuth(e) {
   e.preventDefault();
+  sounds.play('click');
   const login = document.getElementById('auth-login').value.trim();
   const pass = document.getElementById('auth-pass').value;
   const err = document.getElementById('auth-err');
-  err.textContent = '';
 
   if (authMode === 'register') {
     const pass2 = document.getElementById('auth-pass2').value;
     const captcha = document.getElementById('auth-captcha').value.trim().toUpperCase();
 
-    if (pass !== pass2) { err.textContent = 'Пароли не совпадают'; return; }
-    if (captcha !== captchaCode) { err.textContent = 'Неверная капча'; initCaptcha(); return; }
-    if (DB.users[login.toLowerCase()]) { err.textContent = 'Логин занят'; return; }
+    if (pass !== pass2) { err.textContent = 'Пароли не совпадают!'; return; }
+    if (captcha !== captchaCode) { err.textContent = 'Неверный код с картинки!'; initCaptcha(); return; }
+    if (DB.users[login]) { err.textContent = 'Пользователь уже существует!'; return; }
 
-    DB.users[login.toLowerCase()] = {
-      login: login, pass: pass, cash: 10000, level: 1, xp: 0,
+    DB.users[login] = {
+      login, pass, cash: 10000.00, level: 1, xp: 0,
       portfolio: {}, buyPrices: {}, inventory: ['fr_base', 'nk_base'],
-      frame: 'fr_base', nickColor: 'nk_base', promos: []
+      frame: 'fr_base', nickColor: 'nk_base', usedPromos: [], customAvatar: null
     };
-    DB.session = login.toLowerCase();
+    DB.session = login;
     saveDB();
-    initApp();
-
+    startApp();
   } else {
-    const u = DB.users[login.toLowerCase()];
-    if (!u || u.pass !== pass) { err.textContent = 'Неверный логин/пароль'; return; }
-    DB.session = login.toLowerCase();
+    const u = DB.users[login];
+    if (!u || u.pass !== pass) { err.textContent = 'Неверный логин или пароль!'; return; }
+    DB.session = login;
     saveDB();
-    initApp();
+    startApp();
   }
 }
 
 function logout() {
+  sounds.play('click');
   DB.session = null;
   saveDB();
-  initApp();
+  document.getElementById('app-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
 }
 
-function toast(msg, type = 'ok') {
-  const container = document.getElementById('toast-container');
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.textContent = msg;
-  container.appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 200); }, 2400);
+function startApp() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app-screen').classList.remove('hidden');
+  renderHeader();
+  switchNav('market');
 }
 
-function initApp() {
-  const u = getUser();
-  if (u) {
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('app-screen').classList.remove('hidden');
-    renderHeader();
-    switchNav('market');
+// Auto Auto-login initialization
+window.addEventListener('DOMContentLoaded', () => {
+  if (DB.session && DB.users[DB.session]) {
+    startApp();
   } else {
-    document.getElementById('auth-screen').classList.remove('hidden');
-    document.getElementById('app-screen').classList.add('hidden');
+    initCaptcha();
   }
-}
-
-window.onload = () => initApp();
+});
 </script>
 </body>
 </html>
